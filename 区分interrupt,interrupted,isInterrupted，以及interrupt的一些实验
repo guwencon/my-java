@@ -1,0 +1,267 @@
+test 1:
+   public static void main(String[] args)
+   {
+	  Runnable r=()->
+	  {
+		  int i=0;
+		  try
+		  {
+			  while(!Thread.currentThread().isInterrupted()&&i<500)
+			  {
+				  i++;
+				  System.out.println("第 "+i+" 次运行,  "+"是否中断"+Thread.currentThread().isInterrupted());
+				  if(Math.random()>0.5)
+					 {
+					  Thread.sleep(5);
+					  System.out.println("第 "+i+" 次运行,sleep被调用"+"是否中断"+Thread.currentThread().isInterrupted());
+					  Thread.interrupted();
+					 }
+				  if(Math.random()>0.7)
+				  {
+					  Thread.interrupted();
+				  }
+			  }
+		  }
+		  catch(InterruptedException e)
+		  {
+			  System.out.println("第"+i+"次运行中断"+e);
+		  }
+	  };
+	  new Thread(r).start();
+	 
+	  
+   }
+   
+}
+
+-------------------------------------------分界线--------------------------------------------------------------------
+test 2
+public static void main(String[] args)
+   {
+	  Runnable r=()->
+	  {
+		  int i=0;
+		  try
+		  {
+			  while(i<500)
+			  {
+				  i++;
+				  System.out.println("第 "+i+" 次运行,  "+"是否中断"+Thread.currentThread().isInterrupted());
+				  if(Math.random()>0.5)
+					 {
+					  
+					  Thread.sleep(5);
+					  Thread.currentThread().interrupt();
+					  System.out.println("第 "+i+" 次运行,sleep被调用"+"是否中断"+Thread.currentThread().isInterrupted());
+					 }
+				  System.out.println("第"+i+"次运行interrupt后的程序被调用");
+			  }
+		  }
+		  catch(InterruptedException e)
+		  {
+			  System.out.println("第"+i+"次运行中断"+e);
+		  }
+	  };
+	  new Thread(r).start();
+   
+   //运行结果1
+ -----------------------------  
+  第 1 次运行,  是否中断false
+第 1 次运行,sleep被调用是否中断true
+第1次运行interrupt后的程序被调用
+第 2 次运行,  是否中断true
+第2次运行interrupt后的程序被调用
+第 3 次运行,  是否中断true
+第3次运行中断java.lang.InterruptedException: sleep interrupted
+
+结果2-------------------------
+第 1 次运行,  是否中断false
+第 1 次运行,sleep被调用是否中断true
+第1次运行interrupt后的程序被调用
+第 2 次运行,  是否中断true
+第2次运行interrupt后的程序被调用
+第 3 次运行,  是否中断true
+第3次运行中断java.lang.InterruptedException: sleep interrupted
+结果3----------------------------------
+第 1 次运行,  是否中断false
+第1次运行interrupt后的程序被调用
+第 2 次运行,  是否中断false
+第2次运行interrupt后的程序被调用
+第 3 次运行,  是否中断false
+第3次运行interrupt后的程序被调用
+第 4 次运行,  是否中断false
+第4次运行interrupt后的程序被调用
+第 5 次运行,  是否中断false
+第5次运行interrupt后的程序被调用
+第 6 次运行,  是否中断false
+第 6 次运行,sleep被调用是否中断true
+第6次运行interrupt后的程序被调用
+第 7 次运行,  是否中断true
+第7次运行interrupt后的程序被调用
+第 8 次运行,  是否中断true
+第8次运行interrupt后的程序被调用
+第 9 次运行,  是否中断true
+第9次运行中断java.lang.InterruptedException: sleep interrupted
+
+结论：说明调用interrupt后虽然状态被调整为interrupt但不一定会抛出InterruptedException，不一定会终止程序运行,如果将sleep()删掉，不会抛出InterruptedException
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+test 3
+public static void main(String[] args)
+   {
+	  Runnable r=()->
+	  {
+		  int i=0;
+		 
+			  while(i<50)
+			  {
+				  i++;
+				  System.out.println("第 "+i+" 次运行,  "+"是否中断"+Thread.currentThread().isInterrupted());
+				  if(Math.random()>0.5)
+					 {
+					  Thread.currentThread().interrupt();
+					  System.out.println("第 "+i+" 次运行,interrupt被调用"+"是否中断"+Thread.currentThread().isInterrupted());
+					 }
+				  System.out.println("第"+i+"次运行interrupt后的程序被调用");
+			  
+		  }
+		 
+	  };
+	  new Thread(r).start();
+	 
+	  
+   }
+   
+   结果
+   第 1 次运行,  是否中断false
+第1次运行interrupt后的程序被调用
+第 2 次运行,  是否中断false
+第2次运行interrupt后的程序被调用
+第 3 次运行,  是否中断false
+第 3 次运行,interrupt被调用是否中断true
+第3次运行interrupt后的程序被调用
+第 4 次运行,  是否中断true
+第4次运行interrupt后的程序被调用
+第 5 次运行,  是否中断true
+第5次运行interrupt后的程序被调用
+第 6 次运行,  是否中断true
+第 6 次运行,interrupt被调用是否中断true
+第6次运行interrupt后的程序被调用
+第 7 次运行,  是否中断true
+第 7 次运行,interrupt被调用是否中断true
+第7次运行interrupt后的程序被调用
+第 8 次运行,  是否中断true
+第 8 次运行,interrupt被调用是否中断true
+第8次运行interrupt后的程序被调用
+第 9 次运行,  是否中断true
+第 9 次运行,interrupt被调用是否中断true
+第9次运行interrupt后的程序被调用
+第 10 次运行,  是否中断true
+第 10 次运行,interrupt被调用是否中断true
+第10次运行interrupt后的程序被调用
+第 11 次运行,  是否中断true
+第 11 次运行,interrupt被调用是否中断true
+第11次运行interrupt后的程序被调用
+第 12 次运行,  是否中断true
+第 12 次运行,interrupt被调用是否中断true
+第12次运行interrupt后的程序被调用
+第 13 次运行,  是否中断true
+第13次运行interrupt后的程序被调用
+第 14 次运行,  是否中断true
+第 14 次运行,interrupt被调用是否中断true
+第14次运行interrupt后的程序被调用
+第 15 次运行,  是否中断true
+第15次运行interrupt后的程序被调用
+第 16 次运行,  是否中断true
+第 16 次运行,interrupt被调用是否中断true
+第16次运行interrupt后的程序被调用
+第 17 次运行,  是否中断true
+第17次运行interrupt后的程序被调用
+第 18 次运行,  是否中断true
+第 18 次运行,interrupt被调用是否中断true
+第18次运行interrupt后的程序被调用
+第 19 次运行,  是否中断true
+第 19 次运行,interrupt被调用是否中断true
+第19次运行interrupt后的程序被调用
+第 20 次运行,  是否中断true
+第20次运行interrupt后的程序被调用
+第 21 次运行,  是否中断true
+第21次运行interrupt后的程序被调用
+第 22 次运行,  是否中断true
+第 22 次运行,interrupt被调用是否中断true
+第22次运行interrupt后的程序被调用
+第 23 次运行,  是否中断true
+第 23 次运行,interrupt被调用是否中断true
+第23次运行interrupt后的程序被调用
+第 24 次运行,  是否中断true
+第24次运行interrupt后的程序被调用
+第 25 次运行,  是否中断true
+第 25 次运行,interrupt被调用是否中断true
+第25次运行interrupt后的程序被调用
+第 26 次运行,  是否中断true
+第 26 次运行,interrupt被调用是否中断true
+第26次运行interrupt后的程序被调用
+第 27 次运行,  是否中断true
+第 27 次运行,interrupt被调用是否中断true
+第27次运行interrupt后的程序被调用
+第 28 次运行,  是否中断true
+第28次运行interrupt后的程序被调用
+第 29 次运行,  是否中断true
+第29次运行interrupt后的程序被调用
+第 30 次运行,  是否中断true
+第 30 次运行,interrupt被调用是否中断true
+第30次运行interrupt后的程序被调用
+第 31 次运行,  是否中断true
+第 31 次运行,interrupt被调用是否中断true
+第31次运行interrupt后的程序被调用
+第 32 次运行,  是否中断true
+第 32 次运行,interrupt被调用是否中断true
+第32次运行interrupt后的程序被调用
+第 33 次运行,  是否中断true
+第 33 次运行,interrupt被调用是否中断true
+第33次运行interrupt后的程序被调用
+第 34 次运行,  是否中断true
+第34次运行interrupt后的程序被调用
+第 35 次运行,  是否中断true
+第 35 次运行,interrupt被调用是否中断true
+第35次运行interrupt后的程序被调用
+第 36 次运行,  是否中断true
+第36次运行interrupt后的程序被调用
+第 37 次运行,  是否中断true
+第37次运行interrupt后的程序被调用
+第 38 次运行,  是否中断true
+第 38 次运行,interrupt被调用是否中断true
+第38次运行interrupt后的程序被调用
+第 39 次运行,  是否中断true
+第39次运行interrupt后的程序被调用
+第 40 次运行,  是否中断true
+第 40 次运行,interrupt被调用是否中断true
+第40次运行interrupt后的程序被调用
+第 41 次运行,  是否中断true
+第 41 次运行,interrupt被调用是否中断true
+第41次运行interrupt后的程序被调用
+第 42 次运行,  是否中断true
+第42次运行interrupt后的程序被调用
+第 43 次运行,  是否中断true
+第 43 次运行,interrupt被调用是否中断true
+第43次运行interrupt后的程序被调用
+第 44 次运行,  是否中断true
+第 44 次运行,interrupt被调用是否中断true
+第44次运行interrupt后的程序被调用
+第 45 次运行,  是否中断true
+第 45 次运行,interrupt被调用是否中断true
+第45次运行interrupt后的程序被调用
+第 46 次运行,  是否中断true
+第46次运行interrupt后的程序被调用
+第 47 次运行,  是否中断true
+第 47 次运行,interrupt被调用是否中断true
+第47次运行interrupt后的程序被调用
+第 48 次运行,  是否中断true
+第48次运行interrupt后的程序被调用
+第 49 次运行,  是否中断true
+第49次运行interrupt后的程序被调用
+第 50 次运行,  是否中断true
+第 50 次运行,interrupt被调用是否中断true
+第50次运行interrupt后的程序被调用
+结论
+
+虽然interrupt可以改变线程的状态，发出中断请求，但请求不一定会被许可
