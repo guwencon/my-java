@@ -1,0 +1,29 @@
+public class well {
+	private static int count=0;
+ public static void main(String[] args)
+ {
+	 Scanner in=new Scanner(System.in);
+	 hannuo(in.nextInt(),'A','B','C');
+	 System.out.println("一共移动了"+count+"次");
+ }
+ public static void hannuo(int n,char a,char b,char c)       //将n层塔从a柱借助b柱移动到c柱
+ {
+	if(n==1)
+	{
+		move(a,c);
+	}
+	else
+	{
+		hannuo(n-1,a,c,b);                                 
+		move(a,c);
+		hannuo(n-1,b,a,c);
+	}
+ }
+ public static void move(char x,char y)
+ {
+	 count++;
+	 System.out.printf("从%c移动到%c \n",x,y);
+	 
+ }
+}
+
