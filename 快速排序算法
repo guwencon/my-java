@@ -1,0 +1,53 @@
+package sort;
+
+public class PrioritySorting {
+	public static void main(String[] args) {
+       int[] a= {9,7,4,8,465,2,2,2,4,6,1,7,9,4,2,88,3,3,4};
+      sort(a,0,a.length-1);
+   //    System.out.println(a.length);
+       for(int q:a)
+       {
+    	   System.out.print(q+",");
+       }
+	}
+	public static void proSort(int[] a)
+	{
+	//	System.out.println(a.length);
+		sort(a,0,a.length-1);
+		
+	}
+
+	public static void sort(int[] a, int p, int r) // 对数组进行优先排序
+	{
+		if (p < r) {
+			//System.out.println(a.length);
+			int q = partition(a, p, r);
+			sort(a, p, q - 1);
+			sort(a, q+1,r );
+		}
+	}
+
+	public static int partition(int[] a, int p, int r) // 在数组中寻找分割数
+	{
+		int mid = a[p];
+		int head = p, rear = r; // head,rear分别从前往后和从后往前遍历，寻找比mid小的，大的数
+		while (head < rear) {
+			while (a[rear] >= mid && head < rear) {
+				rear--;
+			}
+			while (a[head] <= mid && head < rear) {
+				head++;
+			}
+			if (head < rear) {
+				int x = a[rear];
+				a[rear] = a[head];
+				a[head] = x;
+			}
+		}
+		int x = a[p];
+		a[p] = a[rear];
+		a[rear] = x;
+		return rear;
+	}
+	
+}
